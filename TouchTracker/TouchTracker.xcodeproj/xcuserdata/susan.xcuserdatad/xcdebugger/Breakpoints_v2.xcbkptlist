@@ -10,28 +10,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TouchTracker/DrawView.swift"
-            timestampString = "537478732.154605"
+            timestampString = "537479992.978032"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "212"
-            endingLineNumber = "212"
-            landmarkName = "originPoint(start:end:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "TouchTracker/DrawView.swift"
-            timestampString = "537478732.154605"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "222"
-            endingLineNumber = "222"
-            landmarkName = "angleBetweenPoints(startingPoint:endPoint:)"
+            startingLineNumber = "106"
+            endingLineNumber = "106"
+            landmarkName = "touchesCancelled(_:with:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

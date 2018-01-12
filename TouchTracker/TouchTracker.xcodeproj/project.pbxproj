@@ -16,7 +16,6 @@
 		08573C342006968A00B196A6 /* TouchTrackerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08573C332006968A00B196A6 /* TouchTrackerUITests.swift */; };
 		08573C42200696C700B196A6 /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08573C41200696C700B196A6 /* Line.swift */; };
 		0888F1692007A09E00C97CFA /* DrawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0888F1682007A09E00C97CFA /* DrawView.swift */; };
-		0888F16B2007F04A00C97CFA /* Circle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0888F16A2007F04A00C97CFA /* Circle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,7 +51,6 @@
 		08573C352006968A00B196A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		08573C41200696C700B196A6 /* Line.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
 		0888F1682007A09E00C97CFA /* DrawView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawView.swift; sourceTree = "<group>"; };
-		0888F16A2007F04A00C97CFA /* Circle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Circle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,7 +108,6 @@
 				0888F1682007A09E00C97CFA /* DrawView.swift */,
 				08573C1A2006968900B196A6 /* Assets.xcassets */,
 				08573C1C2006968900B196A6 /* LaunchScreen.storyboard */,
-				0888F16A2007F04A00C97CFA /* Circle.swift */,
 				08573C1F2006968900B196A6 /* Info.plist */,
 			);
 			path = TouchTracker;
@@ -268,7 +265,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0888F16B2007F04A00C97CFA /* Circle.swift in Sources */,
 				08573C42200696C700B196A6 /* Line.swift in Sources */,
 				08573C162006968900B196A6 /* ViewController.swift in Sources */,
 				0888F1692007A09E00C97CFA /* DrawView.swift in Sources */,
