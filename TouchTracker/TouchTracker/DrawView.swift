@@ -10,6 +10,33 @@ import UIKit
 
 class DrawView: UIView, UIGestureRecognizerDelegate {
     
+    //MARK: variabelen
+    var currentLines = [NSValue:Line]()
+    var finishedLines = [Line]()
+    var selectedLineIndex: Int? {
+        didSet {
+            if selectedLineIndex == nil {
+                let menu = UIMenuController.shared
+                menu.setMenuVisible(false, animated: true)
+            }
+        }
+    }
+    var moveRecognizer: UIPanGestureRecognizer!
+    var longPressRecognizer: UILongPressGestureRecognizer!
+    
+    @IBInspectable var finishedLineColor: UIColor = UIColor.black{
+        didSet{
+            setNeedsDisplay()
+        }
+    }
+    
+    @IBInspectable var currentLineColor: UIColor = UIColor.red{
+        didSet {
+            setNeedsDisplay()
+        }
+    }
+
+
     
     //MARK: initializer
     
@@ -26,7 +53,7 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
         tapRecognizer.require(toFail: doubleTapRecognizer)
         addGestureRecognizer(tapRecognizer)
         
-        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(DrawView.longPress(_:)))
+        longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(DrawView.longPress(_:)))
         addGestureRecognizer(longPressRecognizer)
         
         moveRecognizer = UIPanGestureRecognizer(target: self, action: #selector(DrawView.moveLine(_:)))
@@ -60,12 +87,12 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
             let targetRect = CGRect(x: point.x, y: point.y, width: 2, height: 2)
             menu.setTargetRect(targetRect, in: self)
             menu.setMenuVisible(true, animated: true)
+            resignFirstResponder()
         }
         else {
             //Verberg het menu als er geen lijn geselecteerd is
             menu.setMenuVisible(false, animated: true)
         }
-        
         setNeedsDisplay()
     }
     
@@ -110,14 +137,20 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
     }
     
     func moveLine(_ gestureRecognizer: UIPanGestureRecognizer) {
+        
         print("Recognized a pan")
+        
+        guard longPressRecognizer.state == .changed
+        else {
+            return
+        }
         
         //Als er een lijn geselecteerd is..
         if let index = selectedLineIndex {
             //Als de pan recognizer de positie veranderd..
             if gestureRecognizer.state == .changed {
                 //Hoe ver heeft de pan bewogen
-               
+                
                 let translation = gestureRecognizer.translation(in: self)
                 
                 //Voeg de translation toe aan de huidige begin en eind punten van de lijn
@@ -129,6 +162,7 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
                 gestureRecognizer.setTranslation(CGPoint.zero, in: self)
                 //Teken het scherm opnieuw
                 setNeedsDisplay()
+                
             }
         }
         else {
@@ -141,42 +175,12 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
         return true
     }
     
-    //MARK: variabelen
-    var currentLines = [NSValue:Line]()
-    var finishedLines = [Line]()
-    var selectedLineIndex: Int? {
-        didSet {
-            if selectedLineIndex == nil {
-                let menu = UIMenuController.shared
-                menu.setMenuVisible(false, animated: true)
-            }
-        }
-    }
-    var moveRecognizer: UIPanGestureRecognizer!
-    
-    @IBInspectable var finishedLineColor: UIColor = UIColor.black{
-        didSet{
-            setNeedsDisplay()
-        }
-    }
-    
-    @IBInspectable var currentLineColor: UIColor = UIColor.red{
-        didSet {
-            setNeedsDisplay()
-        }
-    }
-    
-    @IBInspectable var lineThickness: CGFloat = 10 {
-        didSet {
-            setNeedsDisplay()
-        }
-    }
     
     //MARK: tekenfuncties
     
     func stroke(_ line: Line) {
         let path = UIBezierPath()
-        path.lineWidth = lineThickness
+        path.lineWidth = line.lineThickness
         path.lineCapStyle = .round
         
         path.move(to: line.begin)
@@ -187,12 +191,14 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
     override func draw(_ rect: CGRect) {
         //Teken lijnen die af zijn in het zwart
         finishedLineColor.setStroke()
+    
         for line in finishedLines {
             stroke(line)
         }
         
         currentLineColor.setStroke()
         for (_, line) in currentLines {
+
             stroke(line)
         }
         
@@ -203,6 +209,12 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
+    func linedikte(_ snelheidx: CGFloat, _ snelheidy: CGFloat) -> CGFloat {
+        let gemiddeldeSnelheid = (abs(snelheidx) + abs(snelheidy)) / 2
+        let lineThickness = gemiddeldeSnelheid/50
+        return lineThickness
+    }
+    
     //MARK: touch functies
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -211,8 +223,8 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
         
         for touch in touches {
             let location = touch.location(in: self)
-            
-            let newLine = Line(begin: location, end: location)
+            let currentlineThickness = linedikte(moveRecognizer.velocity(in: self).x, moveRecognizer.velocity(in: self).y)
+            let newLine = Line(begin: location, end: location, lineThickness: currentlineThickness)
             
             let key = NSValue(nonretainedObject: touch)
             currentLines[key] = newLine
@@ -271,13 +283,12 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
                 let y = begin.y + ((end.y - begin.y)) * t
                 
                 //Als het aangeraakte punt binnen 20 punten is, geef dan de lijn terug
-                if hypot(x - point.x, y - point.y) < 20.0 {
+                if hypot(x - point.x, y - point.y) < 20.0  {
                     return index
                 }
             }
         }
         // Als niks in de buurt ligt van het gekozen punt is er geen lijn geselecteerd en gebeurt er niks
-        
         return nil
     }
     
