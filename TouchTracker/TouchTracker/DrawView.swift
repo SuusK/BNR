@@ -8,10 +8,151 @@
 
 import UIKit
 
-class DrawView: UIView {
+class DrawView: UIView, UIGestureRecognizerDelegate {
     
+    
+    //MARK: initializer
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        
+        let doubleTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(DrawView.doubleTap(_:)))
+        doubleTapRecognizer.numberOfTapsRequired = 2
+        doubleTapRecognizer.delaysTouchesBegan = true
+        addGestureRecognizer(doubleTapRecognizer)
+        
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(DrawView.tap(_:)))
+        tapRecognizer.delaysTouchesBegan = true
+        tapRecognizer.require(toFail: doubleTapRecognizer)
+        addGestureRecognizer(tapRecognizer)
+        
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(DrawView.longPress(_:)))
+        addGestureRecognizer(longPressRecognizer)
+        
+        moveRecognizer = UIPanGestureRecognizer(target: self, action: #selector(DrawView.moveLine(_:)))
+        
+        moveRecognizer.delegate = self
+        moveRecognizer.cancelsTouchesInView = false
+        addGestureRecognizer(moveRecognizer)
+    }
+    
+    //MARK: Gesture functies
+    
+    func tap(_ gestureRecognizer: UIGestureRecognizer) {
+        print("Recognized tap")
+        
+        let point = gestureRecognizer.location(in: self)
+        selectedLineIndex = indexOfLine(at: point)
+        
+        //Haal de menu controller op
+        let menu = UIMenuController.shared
+        
+        if selectedLineIndex != nil {
+            
+            // Maak DrawView de target van de menu item action messages
+            becomeFirstResponder()
+            
+            //Maak een nieuwe "Delete" UIMenuItem
+            let deleteItem = UIMenuItem(title: "Delete", action: #selector(DrawView.deleteLine(_:)))
+            menu.menuItems = [deleteItem]
+            
+            //Vertel het menu waar het vandaan moeten komen en laat het zien
+            let targetRect = CGRect(x: point.x, y: point.y, width: 2, height: 2)
+            menu.setTargetRect(targetRect, in: self)
+            menu.setMenuVisible(true, animated: true)
+        }
+        else {
+            //Verberg het menu als er geen lijn geselecteerd is
+            menu.setMenuVisible(false, animated: true)
+        }
+        
+        setNeedsDisplay()
+    }
+    
+    func deleteLine(_ sender: UIMenuController) {
+        //Verwijder de geselecteerde lijn uit de lijst met finishedLines
+        
+        if let index = selectedLineIndex {
+            finishedLines.remove(at: index)
+            selectedLineIndex = nil
+            
+            //Teken alles opnieuw
+            setNeedsDisplay()
+        }
+    }
+    
+    
+    func doubleTap(_ gestureRecognizer: UIGestureRecognizer) {
+        print("Recognized a double tap")
+        
+        selectedLineIndex = nil
+        currentLines.removeAll()
+        finishedLines.removeAll()
+        setNeedsDisplay()
+    }
+    
+    func longPress(_ gestureRecognizer: UIGestureRecognizer) {
+        print("Recognized a long press")
+        
+        if gestureRecognizer.state == .began {
+            let point = gestureRecognizer.location(in: self)
+            selectedLineIndex = indexOfLine(at: point)
+            
+            if selectedLineIndex != nil {
+                //currentLines.removeAll()
+                print("\(currentLines)")
+            }
+        }
+        else if gestureRecognizer.state == .ended {
+            selectedLineIndex = nil
+        }
+        setNeedsDisplay()
+    }
+    
+    func moveLine(_ gestureRecognizer: UIPanGestureRecognizer) {
+        print("Recognized a pan")
+        
+        //Als er een lijn geselecteerd is..
+        if let index = selectedLineIndex {
+            //Als de pan recognizer de positie veranderd..
+            if gestureRecognizer.state == .changed {
+                //Hoe ver heeft de pan bewogen
+               
+                let translation = gestureRecognizer.translation(in: self)
+                
+                //Voeg de translation toe aan de huidige begin en eind punten van de lijn
+                finishedLines[index].begin.x += translation.x
+                finishedLines[index].begin.y += translation.y
+                finishedLines[index].end.x += translation.x
+                finishedLines[index].end.y += translation.y
+                
+                gestureRecognizer.setTranslation(CGPoint.zero, in: self)
+                //Teken het scherm opnieuw
+                setNeedsDisplay()
+            }
+        }
+        else {
+            //Als er geen lijn geselecteerd is, gebeurt er niks
+            return
+        }
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+    
+    //MARK: variabelen
     var currentLines = [NSValue:Line]()
     var finishedLines = [Line]()
+    var selectedLineIndex: Int? {
+        didSet {
+            if selectedLineIndex == nil {
+                let menu = UIMenuController.shared
+                menu.setMenuVisible(false, animated: true)
+            }
+        }
+    }
+    var moveRecognizer: UIPanGestureRecognizer!
     
     @IBInspectable var finishedLineColor: UIColor = UIColor.black{
         didSet{
@@ -30,6 +171,8 @@ class DrawView: UIView {
             setNeedsDisplay()
         }
     }
+    
+    //MARK: tekenfuncties
     
     func stroke(_ line: Line) {
         let path = UIBezierPath()
@@ -52,7 +195,15 @@ class DrawView: UIView {
         for (_, line) in currentLines {
             stroke(line)
         }
+        
+        if let index = selectedLineIndex {
+            UIColor.green.setStroke()
+            let selectedLine = finishedLines[index]
+            stroke(selectedLine)
+        }
     }
+    
+    //MARK: touch functies
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         //Log statement om de volgorde van events te kunnen bekijken
@@ -71,7 +222,7 @@ class DrawView: UIView {
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print(#function)
+        // print(#function)
         
         for touch in touches {
             let key = NSValue(nonretainedObject: touch)
@@ -104,4 +255,34 @@ class DrawView: UIView {
         
         setNeedsDisplay()
     }
+    
+    //MARK: Overige functies
+    
+    func indexOfLine(at point: CGPoint) -> Int? {
+        //Vind een getekende lijn dichtbij het gekozen punt
+        for (index, line) in finishedLines.enumerated() {
+            
+            let begin = line.begin
+            let end = line.end
+            
+            //Check enkele punten op de lijn
+            for t in stride(from: CGFloat(0), to: 1.0, by: 0.05) {
+                let x = begin.x + ((end.x - begin.x)) * t
+                let y = begin.y + ((end.y - begin.y)) * t
+                
+                //Als het aangeraakte punt binnen 20 punten is, geef dan de lijn terug
+                if hypot(x - point.x, y - point.y) < 20.0 {
+                    return index
+                }
+            }
+        }
+        // Als niks in de buurt ligt van het gekozen punt is er geen lijn geselecteerd en gebeurt er niks
+        
+        return nil
+    }
+    
+    override var canBecomeFirstResponder: Bool  {
+        return true
+    }
+    
 }
