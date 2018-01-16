@@ -8,9 +8,11 @@
 
 import Foundation
 import CoreGraphics
+import UIKit
 
 struct Line {
     var begin = CGPoint.zero
     var end = CGPoint.zero
     var lineThickness = CGFloat.init(15)
+    var lineColor: UIColor
 }

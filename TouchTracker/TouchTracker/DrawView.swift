@@ -24,19 +24,11 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
     var moveRecognizer: UIPanGestureRecognizer!
     var longPressRecognizer: UILongPressGestureRecognizer!
     
-    @IBInspectable var finishedLineColor: UIColor = UIColor.black{
-        didSet{
-            setNeedsDisplay()
-        }
-    }
     
-    @IBInspectable var currentLineColor: UIColor = UIColor.red{
-        didSet {
-            setNeedsDisplay()
-        }
-    }
+    var currentLineColor = UIColor.red
+    var finishedLineColor = UIColor.blue
 
-
+    
     
     //MARK: initializer
     
@@ -61,6 +53,9 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
         moveRecognizer.delegate = self
         moveRecognizer.cancelsTouchesInView = false
         addGestureRecognizer(moveRecognizer)
+        
+    
+        
     }
     
     //MARK: Gesture functies
@@ -138,11 +133,11 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
     
     func moveLine(_ gestureRecognizer: UIPanGestureRecognizer) {
         
-        print("Recognized a pan")
+        //print("Recognized a pan")
         
         guard longPressRecognizer.state == .changed
-        else {
-            return
+            else {
+                return
         }
         
         //Als er een lijn geselecteerd is..
@@ -175,6 +170,9 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
         return true
     }
     
+  
+    
+   
     
     //MARK: tekenfuncties
     
@@ -190,15 +188,14 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
     
     override func draw(_ rect: CGRect) {
         //Teken lijnen die af zijn in het zwart
-        finishedLineColor.setStroke()
-    
         for line in finishedLines {
+            line.lineColor.setStroke()
             stroke(line)
         }
         
         currentLineColor.setStroke()
         for (_, line) in currentLines {
-
+            
             stroke(line)
         }
         
@@ -224,7 +221,7 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
         for touch in touches {
             let location = touch.location(in: self)
             let currentlineThickness = linedikte(moveRecognizer.velocity(in: self).x, moveRecognizer.velocity(in: self).y)
-            let newLine = Line(begin: location, end: location, lineThickness: currentlineThickness)
+            let newLine = Line(begin: location, end: location, lineThickness: currentlineThickness, lineColor: currentLineColor)
             
             let key = NSValue(nonretainedObject: touch)
             currentLines[key] = newLine
@@ -252,6 +249,7 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
             if var line = currentLines[key] {
                 line.end = touch.location(in: self)
                 
+                line.lineColor = finishedLineColor
                 finishedLines.append(line)
                 currentLines.removeValue(forKey: key)
             }
