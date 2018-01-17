@@ -13,9 +13,7 @@ class PhotosViewController: UIViewController {
     @IBOutlet var imageView: UIImageView!
     var store: PhotoStore!
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
+    @IBAction func interestingPhotos(_ sender: UIBarButtonItem) {
         store.fetchInterestingPhotos {
             (photosResult) -> Void in
             switch photosResult {
@@ -29,6 +27,23 @@ class PhotosViewController: UIViewController {
             }
         }
     }
+    
+    
+    @IBAction func recentPhotos(_ sender: UIBarButtonItem) {
+        store.fetchRecentPhotos {
+            (photosResult) -> Void in
+            switch photosResult {
+            case let .success(photos):
+                print("Succesfully found \(photos.count) photos.")
+                if let firstPhoto = photos.first {
+                    self.updateImageView(for: firstPhoto)
+                }
+            case let .failure(error):
+                print("Error fetching intersting photos: \(error)")
+            }
+        }
+    }
+    
     
     func updateImageView(for photo: Photo) {
         store.fetchImage(for: photo) {

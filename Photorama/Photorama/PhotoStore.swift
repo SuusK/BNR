@@ -40,7 +40,7 @@ class PhotoStore {
             let statusCode = httpResponse.statusCode
             let headerFields = httpResponse.allHeaderFields
             print("Status code: \(statusCode)")
-            print("Header Fields: \(headerFields)")
+//            print("Header Fields: \(headerFields)")
             
             let result = self.processPhotosRequest(data: data, error: error)
             OperationQueue.main.addOperation {
@@ -49,6 +49,26 @@ class PhotoStore {
         }
         task.resume()
     }
+    
+    func fetchRecentPhotos(completion: @escaping (PhotosResult) -> Void) {
+        let url = FlickrAPI.recentPhotosURL
+        let request = URLRequest(url: url)
+        let task = session.dataTask(with: request) {
+            (data, response, error) -> Void in
+            let httpResponse = response as! HTTPURLResponse
+            let statusCode = httpResponse.statusCode
+            let headerFields = httpResponse.allHeaderFields
+            print("Status code: \(statusCode)")
+            //            print("Header Fields: \(headerFields)")
+            
+            let result = self.processPhotosRequest(data: data, error: error)
+            OperationQueue.main.addOperation {
+                completion(result)
+            }
+        }
+        task.resume()
+    }
+    
     
     func fetchImage(for photo: Photo, completion: @escaping (ImageResult) -> Void) {
         
@@ -62,7 +82,7 @@ class PhotoStore {
             let statusCode = httpResponse.statusCode
             let headerFields = httpResponse.allHeaderFields
             print("Status code: \(statusCode)")
-            print("Header Fields: \(headerFields)")
+//            print("Header Fields: \(headerFields)")
             
             let result = self.processImageRequest(data: data, error: error)
             OperationQueue.main.addOperation {
