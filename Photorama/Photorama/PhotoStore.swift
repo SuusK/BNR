@@ -36,10 +36,15 @@ class PhotoStore {
         let request = URLRequest(url: url)
         let task = session.dataTask(with: request) {
             (data, response, error) -> Void in
+            let httpResponse = response as! HTTPURLResponse
+            let statusCode = httpResponse.statusCode
+            let headerFields = httpResponse.allHeaderFields
+            print("Status code: \(statusCode)")
+            print("Header Fields: \(headerFields)")
+            
             let result = self.processPhotosRequest(data: data, error: error)
             OperationQueue.main.addOperation {
                 completion(result)
-                print(result)
             }
         }
         task.resume()
@@ -52,6 +57,12 @@ class PhotoStore {
         
         let task = session.dataTask(with: request) {
             (data, response, error) -> Void in
+            
+            let httpResponse = response as! HTTPURLResponse
+            let statusCode = httpResponse.statusCode
+            let headerFields = httpResponse.allHeaderFields
+            print("Status code: \(statusCode)")
+            print("Header Fields: \(headerFields)")
             
             let result = self.processImageRequest(data: data, error: error)
             OperationQueue.main.addOperation {
