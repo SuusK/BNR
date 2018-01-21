@@ -113,6 +113,14 @@ class PhotoStore {
         }
     }
     
+    func saveContextIfNeeded () {
+        let viewContext = persistentContainer.viewContext
+        if viewContext.hasChanges {
+            print("Save changes")
+            try? viewContext.save()
+        }
+    }
+    
     //MARK: private functions
     
     private func processImageRequest(data: Data?, error: Error?) -> ImageResult {

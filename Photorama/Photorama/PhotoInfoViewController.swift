@@ -18,6 +18,8 @@ class PhotoInfoViewController: UIViewController {
         }
     }
     
+    @IBOutlet var viewsLabel: UILabel!
+    
     var store: PhotoStore!
     
     override func viewDidLoad() {
@@ -27,6 +29,8 @@ class PhotoInfoViewController: UIViewController {
             switch result {
             case let .success(image):
                 self.imageView.image = image
+                self.viewsLabel.text = String("Number of views: \(self.photo.views)")
+
             case let .failure(error):
                 print("Error fetching image for photo: \(error)")
             }

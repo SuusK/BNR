@@ -59,6 +59,8 @@ struct FlickrAPI {
             photo.photoID = photoID
             photo.dateTaken = dateTaken as NSDate
             photo.remoteURL = url as NSURL
+            photo.views = 0
+        
         }
         return photo
     }
@@ -93,7 +95,7 @@ struct FlickrAPI {
         return components.url!
     }
     
-
+    
     
     static func photos(fromJSON data: Data, into context: NSManagedObjectContext) -> PhotosResult {
         do {
@@ -107,6 +109,7 @@ struct FlickrAPI {
                     return .failure(FlickrError.invalidJSONData)
             }
             var finalPhotos = [Photo]()
+
             for photoJSON in photosArray {
                 if let photo = photo(fromJSON: photoJSON, into: context) {
                     finalPhotos.append(photo)
