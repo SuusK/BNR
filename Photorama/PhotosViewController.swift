@@ -8,13 +8,30 @@
 
 import UIKit
 
-class PhotosViewController: UIViewController, UICollectionViewDelegate {
+class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     
     @IBOutlet var collectionView: UICollectionView!
     
     var store: PhotoStore!
     let photoDataSource = PhotoDataSource()
+    let itemsPerRow: CGFloat = 5
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        let availabeWidth = view.frame.width
+        let widthPerItem = availabeWidth / itemsPerRow
+        
+        return CGSize(width: widthPerItem, height: widthPerItem)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        
+        return UIEdgeInsetsMake(50.0, 20.0, 50.0, 20.0)
+    }
+    
+    
+   
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,6 +71,11 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate {
                 cell.update(with: image)
             }
         }
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        
+        return self.collectionView.reloadData()
     }
     
     
