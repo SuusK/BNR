@@ -23,22 +23,16 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate {
         collectionView.delegate = self
         
         
+        
+        updateDataSource()
+        
         store.fetchInterestingPhotos {
             (photosResult) -> Void in
-            
-            switch photosResult {
-            case let .success(photos):
-                print("Succesfully found \(photos.count) photos.")
-                self.photoDataSource.photos = photos
-            case let .failure(error):
-                print("Error fetching intersting photos: \(error)")
-                self.photoDataSource.photos.removeAll()
-            }
-            self.collectionView.reloadSections(IndexSet(integer: 0))
+            self.updateDataSource()
         }
     }
-
-
+    
+    
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let photo = photoDataSource.photos[indexPath.row]
         
@@ -69,6 +63,20 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate {
             }
         default:
             preconditionFailure("Unexpected Segue indentiier")
+        }
+    }
+    
+    private func updateDataSource() {
+        store.fetchAllPhotos{
+            (photosResult) in
+            
+            switch photosResult {
+            case let .success(photos):
+                self.photoDataSource.photos = photos
+            case .failure:
+                self.photoDataSource.photos.removeAll()
+            }
+            self.collectionView.reloadSections(IndexSet(integer: 0))
         }
     }
 }
