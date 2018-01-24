@@ -94,14 +94,27 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="D3Q-t8-N4j">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
                             </imageView>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FxQ-Mk-R7Q">
+                                <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                                <items>
+                                    <barButtonItem title="Tags" id="pnl-ff-K3H">
+                                        <connections>
+                                            <segue destination="edZ-Xx-PAJ" kind="presentation" identifier="showTags" id="u3x-lF-V1u"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="FxQ-Mk-R7Q" firstAttribute="leading" secondItem="hid-hh-TnX" secondAttribute="leading" id="3rw-ji-ZR9"/>
                             <constraint firstAttribute="trailing" secondItem="D3Q-t8-N4j" secondAttribute="trailing" id="BM5-NU-6Mo"/>
+                            <constraint firstAttribute="trailing" secondItem="FxQ-Mk-R7Q" secondAttribute="trailing" id="LkF-m2-gDE"/>
                             <constraint firstItem="D3Q-t8-N4j" firstAttribute="leading" secondItem="hid-hh-TnX" secondAttribute="leading" id="PkS-Cd-us7"/>
-                            <constraint firstAttribute="bottom" secondItem="D3Q-t8-N4j" secondAttribute="bottom" id="pcU-2l-yj7"/>
+                            <constraint firstItem="FxQ-Mk-R7Q" firstAttribute="top" secondItem="D3Q-t8-N4j" secondAttribute="bottom" id="bXr-tW-uij"/>
+                            <constraint firstItem="FxQ-Mk-R7Q" firstAttribute="bottom" secondItem="4up-If-gIL" secondAttribute="top" id="muH-Bk-2qG"/>
                             <constraint firstItem="D3Q-t8-N4j" firstAttribute="top" secondItem="hid-hh-TnX" secondAttribute="top" id="s1d-g9-AcX"/>
                         </constraints>
                     </view>
@@ -111,7 +124,72 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Zo3-WS-dKW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1809" y="137"/>
+            <point key="canvasLocation" x="1808.8" y="136.28185907046478"/>
+        </scene>
+        <!--Tags-->
+        <scene sceneID="WT5-CN-Gra">
+            <objects>
+                <tableViewController id="waQ-TU-AKi" customClass="TagsViewController" customModule="Photorama" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="Y9W-Hq-DoU">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="UITableViewCell" textLabel="n4e-lc-cDt" style="IBUITableViewCellStyleDefault" id="T8q-p9-YfI">
+                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="T8q-p9-YfI" id="6H0-pV-Mab">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="n4e-lc-cDt">
+                                            <rect key="frame" x="15" y="0.0" width="345" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="waQ-TU-AKi" id="DxB-lf-Plw"/>
+                            <outlet property="delegate" destination="waQ-TU-AKi" id="66N-cY-umM"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Tags" id="hWX-2O-33y">
+                        <barButtonItem key="leftBarButtonItem" style="done" systemItem="done" id="TEt-2z-C1r">
+                            <connections>
+                                <action selector="done:" destination="waQ-TU-AKi" id="ypw-Xp-P4F"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="zOP-lR-l7V">
+                            <connections>
+                                <action selector="addNewTag:" destination="waQ-TU-AKi" id="G20-Ff-CYK"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="app-vf-kQv" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3567" y="162"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="bWx-ty-cd2">
+            <objects>
+                <navigationController id="edZ-Xx-PAJ" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="UcI-A9-Ks2">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="waQ-TU-AKi" kind="relationship" relationship="rootViewController" id="oaa-FR-Re3"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="FXG-Jh-w3E" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2614" y="162"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="PlK-c0-XQr">
